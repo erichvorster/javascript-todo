@@ -5,6 +5,7 @@ const todoList = document.querySelector(".todo-list");
 const filterOption = document.querySelector(".filter-todo")
 
 //EVENT LISTENERS
+document.addEventListener("DOMContentLoaded", getTodos)// We are calling the getTodos function to get our todos back from local storage
 todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
@@ -20,7 +21,7 @@ function addTodo(event) {
     todoDiv.classList.add("todo");
 
     //Save Local Todos
-    saveLocalTodos();
+    saveLocalTodos(todoInput.value);
     
     //Create Li
     const newTodo = document.createElement('li');
@@ -55,6 +56,7 @@ function deleteCheck(e){
        const todo = item.parentElement;
        //Animation
        todo.classList.add("fall");
+       removeLocalTodos(todo); // Calling our function that deletes todos from local storage
        todo.addEventListener('transitionend', function(){
          todo.remove()
        });
@@ -97,6 +99,8 @@ function filterTodo(e) {
 //Saving todos to local storage - This function is called at the top of the page
 
 function saveLocalTodos(todo) {
+
+    //Check - Do we already have a todo?
     let todos;
     if  (localStorage.getItem("todos") === null) {
         todos = [];
@@ -108,8 +112,8 @@ function saveLocalTodos(todo) {
     localStorage.setItem("todos", JSON.stringify(todos));
 }
 
+// Getting the todos back from local storage
 function getTodos(){
-    let todos;
     let todos;
     if  (localStorage.getItem("todos") === null) {
         todos = [];
@@ -142,4 +146,18 @@ function getTodos(){
     //Append To List
     todoList.appendChild(todoDiv);
     })
+}
+
+//Deleting todos from local storage
+function removeLocalTodos(todo){
+     //Check - Do we already have a todo?
+     let todos;
+     if  (localStorage.getItem("todos") === null) {
+         todos = [];
+     } else {
+         todos = JSON.parse(localStorage.getItem("todos"));
+     }
+    const todoIndex = todo.children[0].innerText;
+    todos.splice(todos.indexOf(todoIndex), 1);
+    localStorage.setItem("todos", JSON.stringify(todos));
 }
